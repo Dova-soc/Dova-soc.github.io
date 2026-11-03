@@ -395,7 +395,12 @@ function requestDraw(){ dirty = true; }
 let dirty = true;
 let qFactor = 1.0;
 /* 手机上不按 2 倍超采样跑，会直接卡死 */
-function isSmall(){ return Math.min(innerWidth, innerHeight) < 700; }
+/* 只有"触摸屏 + 屏幕小"才算手机。电脑窗口再矮也按全画质渲染 */
+function isSmall(){
+  const coarse = (window.matchMedia && matchMedia('(pointer: coarse)').matches)
+                 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  return !!coarse && Math.min(innerWidth, innerHeight) < 900;
+}
 function dprCap(){ return isSmall() ? 1.25 : 2; }
 let lastBusy = false;
 
